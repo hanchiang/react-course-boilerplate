@@ -1,0 +1,46 @@
+import React from 'react';
+import { connect } from 'react-redux';
+
+import selectExpense from '../selectors/expenses';
+import ExpenseListItem from './ExpenseListItem';
+import { startRemoveExpense } from '../actions/expenses';
+
+export function ExpenseList(props) {
+    const handleRemove = (id) => props.startRemoveExpense(id);
+    
+    return (
+        <div className="content-container">
+            <div className="list-header">
+                <div className="show-for-mobile">Expenses</div>
+                <div className="show-for-desktop">Expense</div>
+                <div className="show-for-desktop">Amount</div>
+            </div>
+
+            <div className="list-body">
+                {
+                    props.expenses.length === 0 ? (
+                        <div className="list-item list-item--message"><span>No expenses</span></div>
+                    ) : (
+                            props.expenses.map((expense) =>
+                                <ExpenseListItem
+                                    expense={expense} key={expense.id}
+                                    handleRemove={handleRemove}
+                                />
+                            )
+                        )
+                }
+            </div>
+            
+        </div>
+    );
+}
+
+const mapStateToProps = (state) => ({ 
+    expenses: selectExpense(state.expenses, state.filters)
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    startRemoveExpense: (id) => dispatch(startRemoveExpense(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExpenseList);
